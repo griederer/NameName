@@ -2,7 +2,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <h1 className="text-4xl font-bold">Baby Name Advisor</h1>
-      <p className="mt-4 text-xl">Coming soon...</p>
+      <p className="mt-4 text-xl">AI-powered baby name selection coming soon...</p>
     </main>
   )
 }
