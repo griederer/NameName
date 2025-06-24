@@ -42,5 +42,9 @@ export const capitalize = (str: string): string => {
 
 export const isValidEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  // Check for consecutive dots which should be invalid
+  if (email.includes('..')) {
+    return false
+  }
   return emailRegex.test(email)
 }

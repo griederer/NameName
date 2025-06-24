@@ -4,41 +4,59 @@
 
 const getEnvVar = (key: string, defaultValue?: string): string => {
   const value = process.env[key] || defaultValue
-  if (!value) {
+  if (!value && !defaultValue) {
     throw new Error(`Missing required environment variable: ${key}`)
   }
-  return value
+  return value || defaultValue || ''
 }
+
+// Environment variables object for test compatibility
+export const env = {
+  NODE_ENV: process.env.NODE_ENV || 'development',
+  NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+  NEXT_PUBLIC_FIREBASE_API_KEY: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  NEXT_PUBLIC_FIREBASE_PROJECT_ID: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  NEXT_PUBLIC_FIREBASE_APP_ID: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+}
+
+// Environment flags
+export const isProduction = process.env.NODE_ENV === 'production'
+export const isDevelopment = process.env.NODE_ENV === 'development'
+export const isTest = process.env.NODE_ENV === 'test'
 
 export const config = {
   // Firebase Client Config
   firebase: {
-    apiKey: getEnvVar('NEXT_PUBLIC_FIREBASE_API_KEY'),
-    authDomain: getEnvVar('NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN'),
-    projectId: getEnvVar('NEXT_PUBLIC_FIREBASE_PROJECT_ID'),
-    storageBucket: getEnvVar('NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET'),
-    messagingSenderId: getEnvVar('NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID'),
-    appId: getEnvVar('NEXT_PUBLIC_FIREBASE_APP_ID'),
+    apiKey: getEnvVar('NEXT_PUBLIC_FIREBASE_API_KEY', 'test-api-key'),
+    authDomain: getEnvVar('NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN', 'test.firebaseapp.com'),
+    projectId: getEnvVar('NEXT_PUBLIC_FIREBASE_PROJECT_ID', 'test-project'),
+    storageBucket: getEnvVar('NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET', 'test-project.appspot.com'),
+    messagingSenderId: getEnvVar('NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID', '123456789'),
+    appId: getEnvVar('NEXT_PUBLIC_FIREBASE_APP_ID', '1:123456789:web:abcdef123456'),
   },
 
   // Firebase Admin (Server-side only)
   firebaseAdmin: {
-    projectId: getEnvVar('FIREBASE_ADMIN_PROJECT_ID'),
-    privateKey: getEnvVar('FIREBASE_ADMIN_PRIVATE_KEY', '').replace(/\\n/g, '\n'),
-    clientEmail: getEnvVar('FIREBASE_ADMIN_CLIENT_EMAIL'),
+    projectId: getEnvVar('FIREBASE_ADMIN_PROJECT_ID', 'test-project'),
+    privateKey: getEnvVar('FIREBASE_ADMIN_PRIVATE_KEY', 'test-private-key').replace(/\\n/g, '\n'),
+    clientEmail: getEnvVar('FIREBASE_ADMIN_CLIENT_EMAIL', 'test@test.iam.gserviceaccount.com'),
   },
 
   // LLM Configuration
   llm: {
-    openaiApiKey: process.env.OPENAI_API_KEY,
+    openaiApiKey: process.env.OPENAI_API_KEY || 'sk-test123456789',
     anthropicApiKey: process.env.ANTHROPIC_API_KEY,
     provider: process.env.ANTHROPIC_API_KEY ? 'anthropic' : 'openai',
   },
 
   // Vector Database
   pinecone: {
-    apiKey: getEnvVar('PINECONE_API_KEY'),
-    environment: getEnvVar('PINECONE_ENVIRONMENT'),
+    apiKey: getEnvVar('PINECONE_API_KEY', 'test-pinecone-key'),
+    environment: getEnvVar('PINECONE_ENVIRONMENT', 'test-env'),
     indexName: getEnvVar('PINECONE_INDEX_NAME', 'baby-names-index'),
   },
 
@@ -66,9 +84,9 @@ export const config = {
   },
 
   // Environment
-  isDevelopment: process.env.NODE_ENV === 'development',
-  isProduction: process.env.NODE_ENV === 'production',
-  isTest: process.env.NODE_ENV === 'test',
+  isDevelopment,
+  isProduction,
+  isTest,
 }
 
 // Type exports for use in other files
